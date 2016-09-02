@@ -13,16 +13,17 @@ function lex(s){
 	/* Expresiones regulares para clasificar tokens. 
 	   To-Do: Checar si las expresiones están completas.
 	*/
-	var commands_regex = /(select|insert|create)/;
-	var reserved_regex = /(table|database|into|from|values|null|varchar)/;
-	var symbols_regex = /(\(|\)|,|;|\*)/;
-	var values_regex = /(\"\w*\"|\'\w*\')/;
-	var identifiers_regex = /(\w+)/;
+	var commands_regex = /(select|insert|create)/i;
+	var reserved_regex = /(table|database|into|from|where|values|null|varchar|primary|unique|references|not|check|foreign|key)/i;
+	var symbols_regex = /(\(|\)|,|;|\*)/i;
+	var values_regex = /(\"\w*\"|\'\w*\')/i;
+	var operadors_regex  = /(<|>|!|=)/i;
+	var identifiers_regex = /^([a-zA-Z0-9_-]){1,10}$/i;
 	
 	/* Expresión global para descomponer el String en tokens sin clasificar.
 		To-Do: Checar si se pueden concatenar las variables de las expresiones.
 	*/
-	var G_expresion = /(select|insert|create|table|database|\"\w*\"|\'\w*\'|into|null|from|values|varchar|\w+|\S)/g;
+	var G_expresion = /(select|insert|create|table|database|\"\w*\"|\'\w*\'|into|null|from|values|varchar|\w+|\S)/gi;
 
 	/*Funciones para detectar tipo*/
 	function isCommand(s){
@@ -41,13 +42,18 @@ function lex(s){
 		return values_regex.test(s);
 	}
 
+	function isOperator(s){
+		return operadors_regex.test(s);
+	}
+
 	function isIdentifier(s){
 		return identifiers_regex.test(s);
 	}
 
 	/* ---------------------------- Main ------------------------------------ */
 	var tokens;
-	s = s.toLowerCase();
+	var number_errors = 0;
+	var errors = [];
 	tokens = s.match(G_expresion);
 
 	//Clasificar tokens
@@ -57,9 +63,11 @@ function lex(s){
 
 		if(isCommand(token.value)){
 			token.type = "command";
+			token.value = token.value.toLowerCase();
 			tokens[i] = token;
 		}else if(isReserved(token.value)){
-			token.type = "reseved";
+			token.type = "reserved";
+			token.value = token.value.toLowerCase();
 			tokens[i] = token;
 		}else if(isSymbol(token.value)){
 			token.type = "symbol";
@@ -67,17 +75,28 @@ function lex(s){
 		}else if(isValue(token.value)){
 			token.type = "value";
 			tokens[i] = token;
+		}else if(isOperator(token.value)){
+			token.type = "operator";
+			tokens[i] = token;
 		}else if(isIdentifier(token.value)){
 			token.type = "identifier";
+			token.value = token.value.toLowerCase();
 			tokens[i] = token;
 		}else{
 			//Salir al primer caracter que no cumple con la grámatica y marcar error.
-			console.log("Error en col " + (s.search(token.value) + 1) + ": Símbolo '"+token.value+"' no permitido.");
-			return null;
+			var error = "Error en col " + (s.search(token.value) + 1) + ": Identificador '"+token.value+"' no válido.";
+			errors.push(error);
+			number_errors++;
 		}
 	}
 
-	return tokens;
+	var result = {
+		tokens:tokens,
+		errors:errors,
+		number_errors:number_errors
+	}
+
+	return result;
 };
 
 
