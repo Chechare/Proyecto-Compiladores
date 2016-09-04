@@ -11,19 +11,19 @@
  */
 function lex(s){
 	/* Expresiones regulares para clasificar tokens. 
-	   To-Do: Checar si las expresiones están completas.
+	 TODO: Checar si las expresiones están completas.
 	*/
 	var commands_regex = /(select|insert|create)/i;
-	var reserved_regex = /(table|database|into|from|where|values|null|varchar|primary|unique|references|not|check|foreign|key)/i;
+	var reserved_regex = /(table|database|into|from|where|values|null|varchar|primary|unique|references|not|check|foreign|key|int|bit|date|time|datetime|xml)/i;
 	var symbols_regex = /(\(|\)|,|;|\*)/i;
 	var values_regex = /(\"\w*\"|\'\w*\')/i;
 	var operadors_regex  = /(<|>|!|=)/i;
 	var identifiers_regex = /^([a-zA-Z0-9_-]){1,10}$/i;
 	
 	/* Expresión global para descomponer el String en tokens sin clasificar.
-		To-Do: Checar si se pueden concatenar las variables de las expresiones.
+		TODO: Checar si se pueden concatenar las variables de las expresiones.
 	*/
-	var G_expresion = /(select|insert|create|table|database|\"\w*\"|\'\w*\'|into|null|from|values|varchar|\w+|\S)/gi;
+	var G_expresion = /(select|insert|create|table|database|\"\w*\"|\'\w*\'|into|from|where|values|null|varchar|primary|unique|references|not|check|foreign|key|int|bit|date|time|datetime|xml|\w+|\S)/gi;
 
 	/*Funciones para detectar tipo*/
 	function isCommand(s){
