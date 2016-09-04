@@ -90,14 +90,12 @@ function lex(s){
 		}
 	}
 
-	var result = {
+	return {
 		tokens:tokens,
 		errors:errors,
 		number_errors:number_errors
 	}
-
-	return result;
-};
+}
 
 
 /*Función basura (prueba)*/
@@ -109,9 +107,5 @@ var isCommand = function(s){
 	commands["insert"] = true;
 	commands["delete"] = true;
 
-	if(commands[s]){
-		return true;
-	}
-
-	return false;
-}
+	return(commands[s]);
+};
