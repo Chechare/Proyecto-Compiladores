@@ -18,7 +18,7 @@ function lex(s){
 	var symbols_regex = /(\(|\)|,|;|\*)/i;
 	var values_regex = /(\"\w*\"|\'\w*\')/i;
 	var operadors_regex  = /(<|>|!|=)/i;
-	var identifiers_regex = /^([a-zA-Z0-9_-]){1,10}$/i;
+	var identifiers_regex = /^([a-zA-Z0-9]){3,10}$/i;
 	
 	/* Expresión global para descomponer el String en tokens sin clasificar.
 		TODO: Checar si se pueden concatenar las variables de las expresiones.
